@@ -24,8 +24,14 @@ class HashTable:
         # Your code here
         self.capacity = capacity
         self.list = [None] * self.capacity
-
-
+        # taking load factor into account, we must create a counter for it
+        # this value will be increased when an item is added to this entire array
+        self.ocp_space = 0
+        # using the ocp_space / by self.capacity we measure the load factor
+        # self.load_factor = self.ocp_space / self.capacity
+        # if load factor is above .7, time to increase capacity
+        # if load factor is below .2 then time to decrease capacity
+        
     def get_num_slots(self):
         """
         Return the length of the list you're using to hold the hash
@@ -47,7 +53,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        return (self.ocp_space / self.capacity)
 
     def fnv1(self, key):
         """
@@ -89,9 +95,52 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # we hashed an index
         index = self.hash_index(key)
+        # we replaced values and continued on
+        # self.list[index] = value
 
-        self.list[index] = value
+        # to handle this with a linked list will be to make the nodes
+        # be in a position, and connect them all with next pointers
+        # we will use the HashTableEntry class for this
+
+        # if it is, we will make the value be a hash table entry
+        # we will check and see if it is empty (None)
+        if self.list[index] is None:
+            # self.list[index] = HashTableEntry(key, value)
+            # we will always add 1 to the ocp_space value when we add something
+            self.list[index] = HashTableEntry(key, value)
+            self.ocp_space += 1
+        else:
+            # if there is a node here, we must traverse through the linked list if it is more
+            # than one node connected here
+            cur = self.list[index]
+            while cur.next is not None:
+                # if the key of cur is the same as the key provided, it is an override
+                if cur.key == key:
+                    # we will make the value of this current key equal to the new 
+                    # value we want to be overwritten, we might want to return the old value
+                    # as a confirmation for the user
+                    old_value = cur.value
+                    cur.value = value
+                    # we will print a message to the user
+                    print(f"the new value: {cur.value}")
+                    print(f"You have successfully updated {old_value} to {cur.value}")
+                # we will traverse through , so making cur = cur.next
+                cur = cur.next
+            # when we exit the while loop we have successfully made it to the end
+            # we will now take the cur which has changed to the last one
+            # and add the .next to be this new hashtable entry
+            # don't forget to increase self.ocp space
+            if cur.key == key:
+                old_value = cur.value
+                cur.value = value
+                print(f"the new value: {cur.value}")
+                print(f"You have successfully updated {old_value} to {cur.value}")
+            else:
+                cur.next = HashTableEntry(key, value)
+                self.ocp_space += 1
+        
 
 
 
@@ -105,10 +154,25 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # must hash the index first to find it's position
         index = self.hash_index(key)
+        cur = self.list[index]
+        # if there is nothingin that spot, means that something is not there
+        # we will return a message saying it does not exist 
+        if cur is None:
+            print(f"Key does not exist")
+        else:
+            
+            while cur is not None:
 
-        self.list[index] = None
+                if cur.key == key:
+                    old_value = cur.value
+                    cur.value = None
+                    self.ocp_space -= 1
+                    print(f"You have deleted {old_value}")
+                cur = cur.next
 
+            return f"Key was not found"
 
     def get(self, key):
         """
@@ -120,11 +184,22 @@ class HashTable:
         """
         # Your code here
         index = self.hash_index(key)
-
-        if self.list[index] is None:
+        cur = self.list[index]
+        if cur is None:
             return None
-            
-        return self.list[index]
+        else:
+            # how to access the item we want based off key
+            while cur is not None:
+
+                # if we find the key, delete the value associated with it
+                # or you can delete any mentioning of that node 
+                if cur.key == key:
+                    # return the value 
+                    return cur.value
+                # how we traverse through linked list
+                cur = cur.next
+            # we are at none, meaning we weren't able to find the key in the linked list
+            return cur
 
 
     def resize(self, new_capacity):
@@ -135,7 +210,8 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        
+# ht = HashTable(1)
 
 
 if __name__ == "__main__":
@@ -156,19 +232,21 @@ if __name__ == "__main__":
 
     print("")
 
+
+
     # Test storing beyond capacity
     for i in range(1, 13):
         print(ht.get(f"line_{i}"))
 
-    # Test resizing
-    old_capacity = ht.get_num_slots()
-    ht.resize(ht.capacity * 2)
-    new_capacity = ht.get_num_slots()
+#     # Test resizing
+#     old_capacity = ht.get_num_slots()
+#     ht.resize(ht.capacity * 2)
+#     new_capacity = ht.get_num_slots()
 
-    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+#     print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
-    # Test if data intact after resizing
-    for i in range(1, 13):
-        print(ht.get(f"line_{i}"))
+#     # Test if data intact after resizing
+#     for i in range(1, 13):
+#         print(ht.get(f"line_{i}"))
 
-    print("")
+#     print("")
