@@ -210,7 +210,54 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        
+
+        # when resizing, we want to create a new array, make it be twice the amount of 
+        # elements currently in capacity
+        if self.get_load_factor() > .7:
+            # creates new array
+            new_arr = [None] * new_capacity
+            
+            # now we want to rehash every item in our current list
+            # we will run a for loop to rehash each item on there, 
+            # and if there are nodes in each .next pointer in that position
+            # we want to traverse through the linked list and rehash each key there is
+            # and then do a put operation on each node
+            # our current hash index function does not have the proper capacity set up. 
+            # we would need to change it to be double the size now and then call our hash index function
+            self.capacity = new_capacity
+
+            for item in self.list:
+
+                # we want to hash the item we are at, then check for next pointers
+                # and then hash those items as well
+                index = self.hash_index(item.key)
+                # we have hashed the current node's key we are in
+                new_arr[index] = HashTableEntry(item.key, item.value)
+                # this handles rehashing every node that is in the linked list 
+                # if there is a linked list on that position
+                if item.next and item.next is not None:
+
+                    cur = item.next
+
+                    while cur is not None:
+                        # we want to rehash every node's key that we are on
+                        # and call that variable new_index
+                        # the new index will then refer to a position in 
+                        # new_arr and we will make that be equal to a new 
+                        # hash table entry with that node's current key and value 
+                        # passed into it
+                        new_index = self.hash_index(cur.key)
+
+                        new_arr[new_index] = HashTableEntry(cur.key, cur.value)
+                        #traverse through linked list 
+                        cur = cur.next
+                    # we have exited the while loop, have gone through the entire linked list
+                # all linked list nodes are accounted for and hashed into the new_arr
+                # now outside of the for loop, we want to make sure our self.list is now 
+                # the new_arr that we have with all the rehashed values
+            self.list = new_arr
+            
+
 # ht = HashTable(1)
 
 
