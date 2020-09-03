@@ -1,6 +1,54 @@
 def word_count(s):
     # Your code here
+    cache = {}
 
+    split_words = s.lower().split()
+
+    ignored_chars = {
+        '"': True,
+        ':': True,
+        ';': True,
+        ',': True,
+        '.': True,
+        '-': True,
+        '+': True,
+        '=': True,
+        '/': True,
+        # "\": True,
+        '|': True,
+        '[': True,
+        ']': True,
+        '{': True,
+        '}': True,
+        '(': True,
+        ')': True,
+        '*': True,
+        '^': True,
+        '&': True,
+            }
+
+    for word in split_words:
+        
+        
+        for letter in word:
+            # print(letter, 'each letter')
+            # build the string as you go
+            
+            if letter in ignored_chars:
+                # word.replace(f"{letter}", '')
+                continue
+            else:
+                x = "".join(letter)
+        
+        print(x)
+        
+
+        if word not in cache:
+            cache[word] = 1
+        else:
+            cache[word] += 1
+
+    # return cache
 
 
 if __name__ == "__main__":
