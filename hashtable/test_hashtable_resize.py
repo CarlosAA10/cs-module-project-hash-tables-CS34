@@ -53,6 +53,7 @@ class TestHashTable(unittest.TestCase):
         ht.put("key-7", "val-7")
         ht.put("key-8", "val-8")
         ht.put("key-9", "val-9")
+        # print(ht.list,"the list")
 
         ht.put("key-0", "new-val-0")
         ht.put("key-1", "new-val-1")
@@ -85,7 +86,9 @@ class TestHashTable(unittest.TestCase):
         self.assertTrue(return_value == "new-val-8")
         return_value = ht.get("key-9")
         self.assertTrue(return_value == "new-val-9")
+        # ht.capacity = ht.capacity * 2
 
+        # print(ht.list, 'list after increasing size') # list stayed the same
     def test_hash_table_removes_correctly(self):
         ht = HashTable(8)
 
